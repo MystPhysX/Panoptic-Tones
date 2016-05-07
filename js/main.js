@@ -64,62 +64,59 @@ function texttoMusic(string) {
   }
   
   //Generates a waveform to add to the novelty.
-  $(function(){
-
-    //If a waveform already exists this skips creation.
-	  if(waveContext == 0) {
-	    //the waveform HTML generation.
-	    waveContext = $("<canvas>", {
-		    "id" : "waveform"
-	    }).appendTo("#soundgroup").get(0).getContext("2d");
-	  }
+  //If a waveform already exists this skips creation.
+  if(waveContext == 0) {
+  //the waveform HTML generation.
+  waveContext = $("<canvas>", {
+    "id" : "waveform"
+    }).appendTo("#soundgroup").get(0).getContext("2d");
+  }
 	
-	  var waveformGradient;
+  var waveformGradient;
 
-	  //Analyses and draws the waveform based on incoming data from the synth
-	  function drawWaveform(values){
-		  //draw the waveform
-		  waveContext.clearRect(0, 0, canvasWidth, canvasHeight);
-		  var values = waveform.analyse();
-		  waveContext.beginPath();
-		  waveContext.lineJoin = "round";
-		  waveContext.lineWidth = 6;
-		  waveContext.strokeStyle = waveformGradient;
-		  waveContext.moveTo(0, (values[0] / 255) * canvasHeight);
-		  for (var i = 1, len = values.length; i < len; i++){
-  			var val = values[i] / 255;
-			  var x = canvasWidth * (i / len);
-			  var y = val * canvasHeight;
-			  waveContext.lineTo(x, y);
-		  }
-		  waveContext.stroke();
-	  }
+  //Analyses and draws the waveform based on incoming data from the synth
+  function drawWaveform(values){
+    //draw the waveform
+    waveContext.clearRect(0, 0, canvasWidth, canvasHeight);
+    var values = waveform.analyse();
+		waveContext.beginPath();
+		waveContext.lineJoin = "round";
+		waveContext.lineWidth = 6;
+		waveContext.strokeStyle = waveformGradient;
+		waveContext.moveTo(0, (values[0] / 255) * canvasHeight);
+		for (var i = 1, len = values.length; i < len; i++){
+  		var val = values[i] / 255;
+		  var x = canvasWidth * (i / len);
+		  var y = val * canvasHeight;
+		  waveContext.lineTo(x, y);
+		}
+		waveContext.stroke();
+	 }
 
-	  //Calculates the size the waveform canvas element should be.
-	  var canvasWidth, canvasHeight;
-    function sizeCanvases(){
-		  canvasWidth = $("#page").width();
-		  canvasHeight = 255;
-		  waveContext.canvas.width = canvasWidth;
-		  waveContext.canvas.height = canvasHeight;
+  //Calculates the size the waveform canvas element should be.
+  var canvasWidth, canvasHeight;
+  function sizeCanvases(){
+	  canvasWidth = $("#page").width();
+	  canvasHeight = 255;
+	  waveContext.canvas.width = canvasWidth;
+	  waveContext.canvas.height = canvasHeight;
 
-		  //Form the gradient the waveform will use.
-		  waveformGradient = waveContext.createLinearGradient(0, 0, canvasWidth, canvasHeight);
-		  waveformGradient.addColorStop(0, "#ddd");
-		  waveformGradient.addColorStop(1, "#000");   
-	  }
+	  //Form the gradient the waveform will use.
+	  waveformGradient = waveContext.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+	  waveformGradient.addColorStop(0, "#ddd");
+	  waveformGradient.addColorStop(1, "#000");   
+  }
 
-	  sizeCanvases();
+  sizeCanvases();
 	  
-	  //Loops while the synth is outputting in order to draw the waveform.
-	  function loop(){
-		  requestAnimationFrame(loop);
-  		//Get waveform values in order to draw it.
-		  var waveformValues = waveform.analyse();
-		  drawWaveform(waveformValues);
-	  }
-	  loop();
-  });
+  //Loops while the synth is outputting in order to draw the waveform.
+  function loop(){
+    requestAnimationFrame(loop);
+    //Get waveform values in order to draw it.
+    var waveformValues = waveform.analyse();
+    drawWaveform(waveformValues);
+  }
+  loop();
   
   var j = 0.0;
   var k = "";
