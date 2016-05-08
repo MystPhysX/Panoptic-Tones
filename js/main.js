@@ -1,7 +1,8 @@
-var hash, fingerprint, synth;
+var hash, fingerprint;
 var selectedSound = 1;
 var waveform = new Tone.Analyser(1024, "waveform");
 var waveContext = 0;
+var numOfBars = 0;
 var tonemap = ["A0", "B0", "C1", "D1", "E1", "F1", "G1", "A1", "B1", "C2", "D2", "E2", "F2", "G2", "A2", "B2", "C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5", "F5", "G5", "A5", "B5", "C6", "D6", "E6", "F6", "G6", "A6", "B6", "C7", "D7", "E7", "F7", "G7", "A7", "B7", "C8"];
 
 //This function leverages fingerprint.js in order to generate the browser fingerprint and display it.
@@ -18,9 +19,9 @@ function generateFingerprint() {
         hash = result;
         
         //Creating the new page and table.
-        var table = '<div id="soundgroup" class="text-center"><button class="btn btn-default" onclick="synthType(1)">Default Sound</button>' + 
-        '<button class="btn btn-default" onclick="synthType(2)">Sound Type 2</button>' +
-        '<button class="btn btn-default" onclick="synthType(3)">Sound Type 3</button></div>' +
+        var table = '<div id="soundgroup" class="text-center"><button class="btn btn-default btn-space" onclick="synthType(1)">Default Sound</button>' + 
+        '<button class="btn btn-default btn-space" onclick="synthType(2)">Sound Type 2</button>' +
+        '<button class="btn btn-default btn-space" onclick="synthType(3)">Sound Type 3</button></div>' +
         '<br><button id="short" class="btn btn-default center-block" onclick="texttoMusic(hash)">Listen to the hash</button>' +
         '<br><button id="long" class="btn btn-default center-block" onclick="texttoMusic(fingerprint)">Listen to the entire fingerprint</button>' +
         '<br><br><p class="text-center">Your browser fingerprint: <strong>' + result + '</strong></p>' +
@@ -49,18 +50,47 @@ function generateFingerprint() {
       });
 }
 
+//Creates and displays a dynamic progress bar based on an input time.
+function progressBar(time) {
+  
+  //Generating the progress bar HTML and displaying it.
+  var barDiv = '<div class="barProgress" id="barProgress' + numOfBars + '"><div class="bar" id="bar' + numOfBars + '"></div></div><br>';
+  document.getElementById("short").insertAdjacentHTML('beforebegin', barDiv);
+  var element = document.getElementById('barProgress' + numOfBars);
+  var elem = document.getElementById('bar' + numOfBars);
+  numOfBars++;
+  var width = 0;
+  var progress = 0;
+  
+  //Starting the update function on set intervals of 250ms.
+  var id = setInterval(frame, 250);
+  
+  //Updates the progress bar if it is not 100% and deletes it if it is.
+  function frame() {
+    if (progress >= 100) {
+      clearInterval(id);
+      element.parentNode.removeChild(element);
+      numOfBars--;
+    } else {
+      width += 0.25;
+      progress = (width/time) * 100;
+      elem.style.width = progress + '%'; 
+    }
+  }
+}
+
 //Converts an incoming string to a tune using a Tone.js synth and the tonemap.
 function texttoMusic(string) {
   
   //There are three different synths users can choose.
   if(selectedSound == 1) {
-    synth = new Tone.SimpleSynth().fan(waveform).toMaster();
+    var synth = new Tone.SimpleSynth().fan(waveform).toMaster();
   }
   else if(selectedSound == 2) {
-    synth = new Tone.MonoSynth().fan(waveform).toMaster();
+    var synth = new Tone.MonoSynth().fan(waveform).toMaster();
   }
   else {
-    synth = new Tone.SimpleFM().fan(waveform).toMaster();
+    var synth = new Tone.SimpleFM().fan(waveform).toMaster();
   }
   
   //Generates a waveform to add to the novelty.
@@ -138,6 +168,9 @@ function texttoMusic(string) {
   }
   //Stops the synth after all notes have been played.
   synth.triggerRelease(k);
+  
+  //Starts the progress bar.
+  progressBar(j);
 }
 
 //Denotes which sound type the user has chosen.

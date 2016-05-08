@@ -1,0 +1,40 @@
+Panoptic Tones User Manual
+
+License: The MIT License (MIT)
+Copyright (c) 2016
+
+
+Welcome to my project.
+Panoptic Tones is an interactive website designed to generate a browser fingerprint for a user's browser and then generate a tune using that string. The project was built using HTML, CSS, JavaScript and jQuery and leverages the Bootstrap, Tone.js, Fingerprintjs2 and jQuery projects in order to implement the aforementioned functionality.
+
+Setup:
+Panoptic Tones is hosted on Github at the following repository: https://github.com/MystPhysX/Panoptic-Tones. In order to get the files a user can use one of two methods:
+1. Download the zip file from here: https://github.com/MystPhysX/Panoptic-Tones/archive/master.zip and unzip the files or
+2. Simply clone the repository using git (if installed) on your command line with the command "git clone https://github.com/MystPhysX/Panoptic-Tones" without the quotes. The project files should now be in a folder named Panoptic-Tones in the current directory.
+
+If using the CS50 IDE, hosting the project is simple.
+1. Run the command "apache50 stop" without the quotes to ensure apache2 is not running.
+2. cd to the Panoptic-Tones folder from the previous step, you should see an index.html file when running the command "ls".
+3. Then run "apache50 start ./" and the website will now be available at https://ide50-username.cs50.io where username is your username.
+
+If using another server follow the steps below.
+1. Make sure either nginx or apache2 are installed.
+2. Setup either nginx or apache2 to serve the Panoptic-Tones folder.
+3. The website will now be available at http://your.servers.ip.address.
+
+
+Using the website is simple.
+1. Simply load the website at the urls mentioned in the previous steps. When it loads you should see a page similar to this: http://puu.sh/oKfUA/620fd3c1e3.png
+2. Clicking on the button "Get my fingerprint" will generate a fingerprint for your browser. You will now see a page similar to this: http://puu.sh/oKfUN/b3b00cba53.png
+3. From the top down:
+    a. The three buttons labeled "Default Sound", "Sound Type 2" and "Sound Type 3" change the instrument with which the tune will be generated. You can change this at any time but it will only take effect when either of the listen buttons are clicked.
+    b. The button "Listen to the hash" will only generate a tune from the 32-character hash generated from the browser fingerprint. Once the button is clicked the generated tone will start playing, a waveform will appear and a progress bar will appear, which will look something like this: http://puu.sh/oKfVi/e23824faba.png. Clicking this button is recommended if you do not want to spend longer than 8 seconds listening as the full fingerprint is many factors longer.
+    c. The button "Listen to the entire fingerprint" generates a tone from a string generated from the entire fingerprint. Once the button is clicked it will also start playing and a waveform with a progress bar will appear much like the "Listen to the hash" button. However, this tone will be much longer as the fingerprint is hundreds of characters.
+    d. The hash generated from the browser fingerprint.
+    e. A neat table showing the components of your browser fingerprint.
+    f. Finally, the "Get my fingerprint" button in case you wish to change something in your browser and try again without reloading the website.
+
+Take notice that the waveform will stick around after any tunes are done playing but the progress bar will not. This is due to the waveform being universal while the progress bar is per-track.
+
+
+That is pretty much the entire website. I hope you enjoy using it as much as I have enjoyed creating it.

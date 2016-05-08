@@ -1,0 +1,44 @@
+Panoptic Tones Design Manual
+
+License: The MIT License (MIT)
+Copyright (c) 2016
+
+
+Components:
+This project leverages Bootstrap, Tone.js, Fingerprintjs2, JavaScript and jQuery in order to generate a browser fingerprint and then a tune from that fingerprint.
+1. Bootstrap is a website framework containing CSS, JavaScript and jQuery components. I used Bootstrap in order to simplify the design process of the website massively. Bootstrap can be found here: https://getbootstrap.com/
+2. Tone.js is Web Audio framework for making music in a browser. Tone.js can be found here: https://github.com/Tonejs/Tone.js
+3. Fingerprintjs2 is a library which allows browser fingerprinting using JavaScript. Fingerprintjs2 can be found here: https://github.com/Valve/fingerprintjs2
+4. JavaScript and jQuery were used in order to offload the website processing to the user's browser. This increases the number of concurrent users on any server as the server only needs to relay the website files.
+
+Timeline Exploration:
+1. When the user first loads the website url the index.html file is fetched by the user's browser in order to display the landing page which looks like this: http://puu.sh/oKfUA/620fd3c1e3.png. The page uses the Bootstrap framework with a Material Design (https://developer.android.com/design/material/index.html) colour scheme generated using the handy Material Palette (http://www.materialpalette.com/) website. I chose these in order to simpify the design process massively as well as give the website a matched colour scheme.
+
+From the top down:
+    a. The title of the website: "Panoptic Tones". I chose this title as the word "Panoptic" is defined (from Google.com) as "showing or seeing the whole at one view." which is what my project aims to do by providing the browser fingerprint which websites can see but the user does not usually see. "Tones" was chosen simply because the website generates a tune from the fingerprint and hence "Panoptic Tones".
+    b. A simple opening statement I describe what a browser fingerprint is, what it can be used for and explain the purpose of the website.
+    c. The "Get my fingerprint" button which starts everything.
+
+2. Once the "Get my fingerprint" button is clicked it calls a JavaScript method named generateFingerprint() which runs as follows:
+    a. Calls Fingerprintjs2 with everything except Canvas and WebGL fingerprinting enabled. These were disabled in order to reduce the final fingerprint by a couple thousand characters, and hence reduce the size of the tune.
+    b. Fingerprintjs2 returns an associative array named "components" and a hash of that array named "result". Components contains two indexes: "key" and "value", where "key" is the type of fingerprinting method (e.g language or resolution) and "value" is the value of that fingerprinting method (e.g en-US or 1920,1080). Once Fingerprintjs2 returns these two variables the function assigns the value of "result" to the global variable "hash" for later and then generates HTML for the following:
+        i. A div with id="soundgroup" containing three buttons, which when clicked pass 3 different values to the function synthType. synthType simply sets the value of a global variable "selectedSound" which in the future determines the type of synthesizer used to generate fingerprint tune.
+        ii. A button with id="short" which calls the function texttoMusic with the value hash which is a global variable containing the hash generated previously. texttoMusic will be discussed shortly.
+        iii. Another button with id="long" which calls the function texttoMusic with the value fingerprint which is a global variable that will be assigned all the values for each key in the components array concatenated into one string.
+        iv. An HTML paragraph containing the browser fingerprint hash.
+        v. Finally, a table with two columns named "Key" and "Value" which will have an x amount of rows where x is the number of fingerprinting techniques successfully utilised by Fingerprintjs2.
+    c. Deletes the div with id="primarytext" which contains the opening statement.
+    d. Attaches the generated HTML to the top of the "Get my fingerprint" button.
+    It will now look something like this: http://puu.sh/oKfUN/b3b00cba53.png
+    
+3. The user can now choose to change sound type or click on either of the listen buttons. Clicking on either of the listen buttons will call the function texttoMusic with the aforementioned values which performs the following in order:
+    a. Depending on the value of the global variable selectedSound (set by the sound type buttons calling synthType) the function will initialise a synthesiser using Tone.js and attach the synth to the global audio output.
+    b. The function then generates a waveform canvas element and inserts that into the webpage after the soundgroup div and attaches it to the global audio output using Tone.js' analyse function which returns waveform data from audio data.
+    c. Then, utilising a global variable "tonemap" which contains an array of all the possible music notes (C4, D3, F6 etc) the function converts the ASCII value of a single character at a time in sequence from the string passed to the function by either of the listen buttons to an index value which corresponds to a note in the tonemap and schedules it to play at an offset of 0.2, giving each note 0.25 seconds to play.
+    d. Following that, the function adds a trigger to stop the synth from playing anything after a set period of time which follows the function "number of characters * 0.25s". If this was not set the synth would continue playing the last note forever.
+    e. Finally the function progressBar is called with a value which equals the time for which the synth will play. progressBar draws a progress bar below the waveform which increments as each note is played to show the user how much of the tune has played and how much is left to play.
+    The webpage will now look something like this: http://puu.sh/oKfVi/e23824faba.png
+    
+4. It is possible for the user to press the listen buttons multiple times which will play multiple tunes at once (offset by the time between button presses). This was initially a bug in the design but as the processing is done by the user's browser and a few of my friends liked it, the bug was left in and is now officially a feature. Pressing the button multiple times can lead to something crazy like this: http://puu.sh/oKi6Y/c637ddf4cc.png. Multiple progress bars appear for each track but the waveform is global in the sense that it is attached to the global audio output so only one is displayed.
+
+That is pretty much the entire website. I hope you enjoy using it as much as I have enjoyed creating it.
