@@ -83,14 +83,18 @@ function progressBar(time) {
 function texttoMusic(string) {
   
   //There are three different synths users can choose.
-  if(selectedSound == 1) {
-    var synth = new Tone.SimpleSynth().fan(waveform).toMaster();
-  }
-  else if(selectedSound == 2) {
-    var synth = new Tone.MonoSynth().fan(waveform).toMaster();
-  }
-  else {
-    var synth = new Tone.SimpleFM().fan(waveform).toMaster();
+  switch (selectedSound) {
+    case 1:
+      var synth = new Tone.SimpleSynth().fan(waveform).toMaster();
+      break;
+
+    case 2:
+      var synth = new Tone.MonoSynth().fan(waveform).toMaster();
+      break;
+
+    case 3:
+      var synth = new Tone.SimpleFM().fan(waveform).toMaster();
+      break;
   }
   
   //Generates a waveform to add to the novelty.
